@@ -70,13 +70,13 @@ public class CustomJobExecutionListener implements JobExecutionListener {
 			FileUtil.move(icfp, Constants.DEFAULT_PROCESSING_FILE_PATH + FileUtil.getFileNameFromPath(icfp));
 		}
 
-		final String mainCTXFile = getMainCTXFileIfCTXProcess(logFileName, "");
+		final String mainCTXFile = getMainCTXFileIfCTXProcess(logFileName);
 		if (!StringUtils.isBlank(mainCTXFile)) {
 			FileUtil.move(Constants.DEFAULT_INPUT_FILE_PATH + mainCTXFile, Constants.DEFAULT_PROCESSING_FILE_PATH + mainCTXFile);
 		}
 	}
 
-	private String getMainCTXFileIfCTXProcess(final String inputFileName, String secondaryFile) {
+	private String getMainCTXFileIfCTXProcess(final String inputFileName) {
 		if (FileUtil.isCTXPaymentProcess(inputFileName) && inputFileName.contains("CTXSPLIT")) {
 			return FileUtil.setupFile(inputFileName);
 		}

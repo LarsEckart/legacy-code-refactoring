@@ -5,7 +5,6 @@ import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
-import java.util.ArrayList;
 import java.util.Map;
 
 import org.joda.time.DateTime;
@@ -22,8 +21,6 @@ public final class DateTimeUtil {
 	private static final DateTimeFormatter FORMATTER_YMD_NO_SLASHES = DateTimeFormat.forPattern("yyyyMMdd");
 	private static final DateTimeFormatter FORMATTER_MDY = DateTimeFormat.forPattern("MM/dd/yyyy");
 	private static final DateTimeFormatter FORMATTER_MDY_NO_SLASHES = DateTimeFormat.forPattern("MMddyyyy");
-	private static final DateTimeFormatter FORMATTER_MDY_TIME = DateTimeFormat.forPattern("MM/dd/yyyy h:mm a");
-
 	private static final int MILLISECONDS_PER_SECOND = 1000;
 	private static final int MILLISECONDS_PER_MINUTE = 60 * MILLISECONDS_PER_SECOND;
 	private static final int MILLISECONDS_PER_HOUR = 60 * MILLISECONDS_PER_MINUTE;

@@ -17,7 +17,6 @@ import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +33,6 @@ public final class FileUtil {
 	private static final String SMATCH = "SMATCH";
 	private static final String FILE_NAME_WITH_AG = ".AG";
 	private static final String FILE_NAME_BEGIN_INDICATOR = "FDM";
-	private static final String SUSP = "SUSP";
 	private static final String SALUPD = "SALUPD";
 	private static final String SALUPI = "SALUPI";
 	private static final String NTXUPD = "NTXUPD";
@@ -143,9 +141,6 @@ public final class FileUtil {
 			final long fileLength = file.length() - 1;
 			final StringBuilder sb = new StringBuilder();
 		
-			// set counter to zero
-			int i = 0;
-
 			for (long filePointer = fileLength; filePointer != -1; filePointer--) {
 				fileHandler.seek(filePointer);
 				final int readByte = fileHandler.readByte();
@@ -163,7 +158,6 @@ public final class FileUtil {
 				}
 
 				sb.append((char) readByte);
-				i++;
 			}
 
 			return sb.reverse().toString();
@@ -287,18 +281,6 @@ public final class FileUtil {
 		}
 
 		return fileNameFromPath;
-	}
-
-	private static String getNSVReversalOutputFileName(final String fileNameFromPath, final String fileNameSecondNode) {
-		return fileNameFromPath.replaceAll(".NTSREV.", "." + fileNameSecondNode + "NTSRAK.");
-	}
-
-	private static String getNSXReversalOutputFileName(final String fileNameFromPath, final String fileNameSecondNode) {
-		return fileNameFromPath.replaceAll(".NTXREV.", "." + fileNameSecondNode + "NTXRAK.");
-	}
-
-	private static String getNTDOReversalOutputFileName(final String fileNameFromPath, final String fileNameSecondNode) {
-		return fileNameFromPath.replaceAll(".NTVREV.", "." + fileNameSecondNode + "NTVRAK.");
 	}
 
 	public static String getFileNameForAccountingExtract(final LocalDate processingDate, final LocalDate runDate) {
@@ -558,10 +540,6 @@ public final class FileUtil {
 		return System.getProperty("top.root", "/theroot");
 	}
 
-	private static String fileNameFrom(final String outputFilePath, final int i) {
-		return outputFilePath + Constants.FILE_SUFFIX + i;
-	}
-
 	public static void deleteFilesWithExtension(final String directoryName, final String extension) {
 
 		final File dir = lookupPath(directoryName);
@@ -617,14 +595,6 @@ public final class FileUtil {
 	private static String generateFileName(final LocalDate processingDate, final String environmentName, final String fileNameSecondNode, final String suffix) {
 		final String fileName = FILE_NAME_BEGIN_INDICATOR + environmentName + "." + fileNameSecondNode + suffix + ".DyyMMdd";
 		return fileName.replaceAll(DATE_PATTERN, DateTimeUtil.formatDateWithPattern(processingDate, DATE_PATTERN));
-	}
-
-	private static String generateFileName(final DateTime processingDate, final String environmentName, final String fileNameSecondNode, final String suffix) {
-		String fileName = FILE_NAME_BEGIN_INDICATOR + environmentName + "." + fileNameSecondNode + suffix + ".DyyMMdd" + ".THHmm";
-		final String dateWithPattern = DateTimeUtil.formatDateWithPattern(processingDate, DATE_TIME_PATTERN);
-		fileName = fileName.replaceAll(DATE_PATTERN, dateWithPattern.substring(0, 6));
-		fileName = fileName.replaceAll(TIME_PATTERN, dateWithPattern.substring(7));
-		return fileName;
 	}
 
 	public static String getPartitionFromCreditElectExtractFileName(final String fileName) {
