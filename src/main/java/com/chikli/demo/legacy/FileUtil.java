@@ -26,8 +26,9 @@ import org.springframework.core.io.Resource;
 
 /**
  * This resource facade supports out-bound file operations.
+ * 
+ * @author admin
  */
-
 public final class FileUtil {
 
 	private static final String SMATCH = "SMATCH";
@@ -53,9 +54,17 @@ public final class FileUtil {
 	public static final String RRB_PROCESS = "RRBINP";
 	public static final String OPM_PROCESS = "OPMINP";
 
+	/**
+	 * Constructor
+	 */
 	private FileUtil() {
 	}
 
+	/**
+	 * sets the logger
+	 * 
+	 * @param logger
+	 */
 	public static void setLogger(final Logger logger) {
 		FileUtil.logger = logger;
 	}
@@ -73,7 +82,13 @@ public final class FileUtil {
 		return name;
 	}
 
-	public static String getCTXMainFileNameFromSplitFileName(String name) {
+	/**
+	 * gets the CTX main file name from split file name
+	 * 
+	 * @param name file name
+	 * @return file name
+	 */
+	public static String setupFile(String name) {
 		if (name == null) {
 			return null;
 		}
@@ -127,6 +142,9 @@ public final class FileUtil {
 
 			final long fileLength = file.length() - 1;
 			final StringBuilder sb = new StringBuilder();
+		
+			// set counter to zero
+			int i = 0;
 
 			for (long filePointer = fileLength; filePointer != -1; filePointer--) {
 				fileHandler.seek(filePointer);
@@ -145,6 +163,7 @@ public final class FileUtil {
 				}
 
 				sb.append((char) readByte);
+				i++;
 			}
 
 			return sb.reverse().toString();

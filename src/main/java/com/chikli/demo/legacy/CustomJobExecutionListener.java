@@ -78,7 +78,7 @@ public class CustomJobExecutionListener implements JobExecutionListener {
 
 	private String getMainCTXFileIfCTXProcess(final String inputFileName, String secondaryFile) {
 		if (FileUtil.isCTXPaymentProcess(inputFileName) && inputFileName.contains("CTXSPLIT")) {
-			return FileUtil.getCTXMainFileNameFromSplitFileName(inputFileName);
+			return FileUtil.setupFile(inputFileName);
 		}
 		return null;
 	}
