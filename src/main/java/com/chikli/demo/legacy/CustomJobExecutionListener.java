@@ -27,7 +27,8 @@ public class CustomJobExecutionListener implements JobExecutionListener {
 		final String filePath = jobParameters.getString("input.file.path");
 
 		final String processingFilePath = jobParameters.getString("processing.file.path");
-		final String processDate = jobParameters.getDate("process.date") != null ? DateTimeUtil.formatDateMdyNoSlashes(jobParameters.getDate("process.date")) : CustomJobExecutionListener.BLANK;
+		final String processDate = jobParameters.getDate("process.date") != null ? DateTimeUtil.formatDateMdyNoSlashes(jobParameters.getDate("process.date"))
+				: CustomJobExecutionListener.BLANK;
 		String logFileName = setupLogfile(jobExecution, jobParameters, filePath, processDate);
 
 		if (StringUtils.isBlank(filePath)) {
@@ -37,22 +38,7 @@ public class CustomJobExecutionListener implements JobExecutionListener {
 		moveFiles(jobParameters, filePath, processingFilePath, logFileName);
 	}
 
-	private void moveFiles(final JobParameters jobParameters, final String filePath, final String processingFilePath, String logFileName) {
-		FileUtil.move(filePath, processingFilePath);
-
-		final String icfp = jobParameters.getString("input.control.file.path");
-
-		if (!StringUtils.isBlank(icfp)) {
-			FileUtil.move(icfp, CustomJobExecutionListener.DEFAULT_PROCESSING_FILE_PATH + FileUtil.getFileNameFromPath(icfp));
-		}
-
-		final String mainCTXFile = getMainCTXFileIfCTXProcess(logFileName);
-		if (!StringUtils.isBlank(mainCTXFile)) {
-			FileUtil.move(CustomJobExecutionListener.DEFAULT_INPUT_FILE_PATH + mainCTXFile, CustomJobExecutionListener.DEFAULT_PROCESSING_FILE_PATH + mainCTXFile);
-		}
-	}
-
-	private String setupLogfile(final JobExecution jobExecution, final JobParameters jobParameters, final String filePath, final String processDate) {
+	String setupLogfile(final JobExecution jobExecution, final JobParameters jobParameters, final String filePath, final String processDate) {
 		String logFileName = !StringUtils.isBlank(filePath) ? FileUtil.getFileNameFromPath(filePath) : jobExecution.getJobInstance().getJobName().concat(processDate);
 
 		if (jobExecution.getJobInstance().getJobName().equals("agencyDebtExtract")) {
@@ -89,6 +75,21 @@ public class CustomJobExecutionListener implements JobExecutionListener {
 		MDC.remove("inputFileName");
 		MDC.put("inputFileName", logFileName);
 		return logFileName;
+	}
+
+	private void moveFiles(final JobParameters jobParameters, final String filePath, final String processingFilePath, String logFileName) {
+		FileUtil.move(filePath, processingFilePath);
+
+		final String icfp = jobParameters.getString("input.control.file.path");
+
+		if (!StringUtils.isBlank(icfp)) {
+			FileUtil.move(icfp, CustomJobExecutionListener.DEFAULT_PROCESSING_FILE_PATH + FileUtil.getFileNameFromPath(icfp));
+		}
+
+		final String mainCTXFile = getMainCTXFileIfCTXProcess(logFileName);
+		if (!StringUtils.isBlank(mainCTXFile)) {
+			FileUtil.move(CustomJobExecutionListener.DEFAULT_INPUT_FILE_PATH + mainCTXFile, CustomJobExecutionListener.DEFAULT_PROCESSING_FILE_PATH + mainCTXFile);
+		}
 	}
 
 	private String getMainCTXFileIfCTXProcess(final String inputFileName) {
