@@ -5,6 +5,7 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import org.joda.time.LocalDate;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.MDC;
@@ -18,6 +19,8 @@ public class CustomJobExecutionListenerTest {
 	private JobExecution jobExecution;
 	private JobInstance jobInstance;
 	private JobParameters jobParameters;
+	private String filePath;
+	private String processDate;
 
 	@Before
 	public void setup() {
@@ -26,14 +29,16 @@ public class CustomJobExecutionListenerTest {
 		jobExecution = mock(JobExecution.class);
 		jobInstance = mock(JobInstance.class);
 		when(jobExecution.getJobInstance()).thenReturn(jobInstance);
-		jobParameters = new JobParameters();
+		jobParameters = mock(JobParameters.class);
+
+		filePath = "/tmp/blah.txt";
+		processDate = "2015-10-10";
 	}
 
 	@Test
 	public void blankFilePath() {
 		when(jobInstance.getJobName()).thenReturn("Fred");
 		String filePath = "";
-		String processDate = "2015-10-10";
 
 		String logfile = listener.setupLogfile(jobExecution, jobParameters, filePath, processDate);
 
@@ -43,12 +48,21 @@ public class CustomJobExecutionListenerTest {
 	@Test
 	public void nonBlankFilePath() {
 		when(jobInstance.getJobName()).thenReturn("Fred");
-		String filePath = "/tmp/blah.txt";
-		String processDate = "2015-10-10";
 
 		String logfile = listener.setupLogfile(jobExecution, jobParameters, filePath, processDate);
 
 		assertLogfile(logfile, "blah.txt");
+	}
+
+	@Test
+	public void agencyDebtExtract() {
+		when(jobInstance.getJobName()).thenReturn("agencyDebtExtract");
+		when(jobParameters.getDate("processing.date")).thenReturn(new LocalDate("2015-10-10").toDate());
+		when(jobParameters.getString("agencyId")).thenReturn("ABC");
+
+		String logfile = listener.setupLogfile(jobExecution, jobParameters, filePath, processDate);
+
+		assertLogfile(logfile, "agencyDebtExtractABC20151010");
 	}
 
 	private void assertLogfile(String logfile, String expectedFilename) {
