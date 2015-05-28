@@ -15,13 +15,19 @@ public class CustomJobExecutionListener implements JobExecutionListener {
 
 	LocalDate initialDate = new LocalDate();
 
+	public static final String DEFAULT_PROCESSED_FILE_PATH = FileUtil.rootDirectory() + "/PROCESSED/";
+	public static final String DEFAULT_PROCESSING_FILE_PATH = FileUtil.rootDirectory() + "/STARTED/";
+	public static final String DEFAULT_INPUT_FILE_PATH = FileUtil.rootDirectory() + "/ARRIVED/";
+
+	public static final String BLANK = "";
+
 	@Override
 	public void beforeJob(final JobExecution jobExecution) {
 		final JobParameters jobParameters = jobExecution.getJobParameters();
 		final String filePath = jobParameters.getString("input.file.path");
 
 		final String pPath = jobParameters.getString("processing.file.path");
-		final String procDate = jobParameters.getDate("process.date") != null ? DateTimeUtil.formatDateMdyNoSlashes(jobParameters.getDate("process.date")) : Constants.BLANK;
+		final String procDate = jobParameters.getDate("process.date") != null ? DateTimeUtil.formatDateMdyNoSlashes(jobParameters.getDate("process.date")) : CustomJobExecutionListener.BLANK;
 		String logFileName = !StringUtils.isBlank(filePath) ? FileUtil.getFileNameFromPath(filePath) : jobExecution.getJobInstance().getJobName().concat(procDate);
 
 		if (jobExecution.getJobInstance().getJobName().equals("agencyDebtExtract")) {
@@ -67,12 +73,12 @@ public class CustomJobExecutionListener implements JobExecutionListener {
 		final String icfp = jobParameters.getString("input.control.file.path");
 
 		if (!StringUtils.isBlank(icfp)) {
-			FileUtil.move(icfp, Constants.DEFAULT_PROCESSING_FILE_PATH + FileUtil.getFileNameFromPath(icfp));
+			FileUtil.move(icfp, CustomJobExecutionListener.DEFAULT_PROCESSING_FILE_PATH + FileUtil.getFileNameFromPath(icfp));
 		}
 
 		final String mainCTXFile = getMainCTXFileIfCTXProcess(logFileName);
 		if (!StringUtils.isBlank(mainCTXFile)) {
-			FileUtil.move(Constants.DEFAULT_INPUT_FILE_PATH + mainCTXFile, Constants.DEFAULT_PROCESSING_FILE_PATH + mainCTXFile);
+			FileUtil.move(CustomJobExecutionListener.DEFAULT_INPUT_FILE_PATH + mainCTXFile, CustomJobExecutionListener.DEFAULT_PROCESSING_FILE_PATH + mainCTXFile);
 		}
 	}
 
@@ -93,16 +99,16 @@ public class CustomJobExecutionListener implements JobExecutionListener {
 			return;
 		}
 
-		final String processedFilePath = Constants.DEFAULT_PROCESSED_FILE_PATH + FileUtil.getFileNameFromPath(processingFilePath);
+		final String processedFilePath = CustomJobExecutionListener.DEFAULT_PROCESSED_FILE_PATH + FileUtil.getFileNameFromPath(processingFilePath);
 		String processedControlFilePath = null;
 		if (!StringUtils.isBlank(inputControlFilePath)) {
-			processedControlFilePath = Constants.DEFAULT_PROCESSED_FILE_PATH + FileUtil.getFileNameFromPath(inputControlFilePath);
+			processedControlFilePath = CustomJobExecutionListener.DEFAULT_PROCESSED_FILE_PATH + FileUtil.getFileNameFromPath(inputControlFilePath);
 		}
 
 		if (jobExecution.getStatus().equals(BatchStatus.COMPLETED)) {
 			FileUtil.move(processingFilePath, processedFilePath);
 			if (!StringUtils.isBlank(processedControlFilePath)) {
-				inputControlFilePath = Constants.DEFAULT_PROCESSING_FILE_PATH + FileUtil.getFileNameFromPath(inputControlFilePath);
+				inputControlFilePath = CustomJobExecutionListener.DEFAULT_PROCESSING_FILE_PATH + FileUtil.getFileNameFromPath(inputControlFilePath);
 				FileUtil.move(inputControlFilePath, processedControlFilePath);
 			}
 		}

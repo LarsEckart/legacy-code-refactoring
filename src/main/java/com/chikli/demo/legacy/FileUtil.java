@@ -18,6 +18,10 @@ public final class FileUtil {
 
 	private static Logger logger = LoggerFactory.getLogger(FileUtil.class);
 
+	public static final String SPILT_REGEX = "\\.";
+
+	public static final String UNKNOWN = "UNKNOWN";
+
 	/**
 	 * Constructor
 	 */
@@ -64,11 +68,11 @@ public final class FileUtil {
 
 	private static String getProcessName(final String fileName) {
 
-		final String[] fileNameArray = fileName.split(Constants.SPILT_REGEX);
+		final String[] fileNameArray = fileName.split(FileUtil.SPILT_REGEX);
 		if (fileNameArray.length > 2) {
 			return fileNameArray[1];
 		}
-		return Constants.UNKNOWN;
+		return FileUtil.UNKNOWN;
 	}
 
 	public static boolean isCTXPaymentProcess(final String name) {
