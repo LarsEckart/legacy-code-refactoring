@@ -65,6 +65,55 @@ public class CustomJobExecutionListenerTest {
 		assertLogfile(logfile, "agencyDebtExtractABC20151010");
 	}
 
+	@Test
+	public void postMatchExtract() {
+		when(jobInstance.getJobName()).thenReturn("postMatchExtract");
+		when(jobParameters.getString("post.match.file.name")).thenReturn("pmf.txt");
+
+		String logfile = listener.setupLogfile(jobExecution, jobParameters, filePath, processDate);
+
+		assertLogfile(logfile, "pmf.txt");
+	}
+
+	@Test
+	public void tpkExtract() {
+		when(jobInstance.getJobName()).thenReturn("tpkExtract");
+		when(jobParameters.getString("tpk.offsets.extract.filename")).thenReturn("tpk.txt");
+
+		String logfile = listener.setupLogfile(jobExecution, jobParameters, filePath, processDate);
+
+		assertLogfile(logfile, "tpk.txt");
+	}
+	@Test
+	public void dnpExtract() {
+		when(jobInstance.getJobName()).thenReturn("dnpExtract");
+		when(jobParameters.getString("dnp.extract.filename")).thenReturn("dnp.txt");
+
+		String logfile = listener.setupLogfile(jobExecution, jobParameters, filePath, processDate);
+
+		assertLogfile(logfile, "dnp.txt");
+	}
+
+	@Test
+	public void paymentExtract() {
+		when(jobInstance.getJobName()).thenReturn("paymentExtract");
+		when(jobParameters.getString("payment.extract.filename")).thenReturn("payment.txt");
+
+		String logfile = listener.setupLogfile(jobExecution, jobParameters, filePath, processDate);
+
+		assertLogfile(logfile, "payment.txt");
+	}
+
+	@Test
+	public void creditElectExtract() {
+		when(jobInstance.getJobName()).thenReturn("creditElectExtract");
+		when(jobParameters.getString("credit.elect.extract.filename")).thenReturn("credit.txt");
+
+		String logfile = listener.setupLogfile(jobExecution, jobParameters, filePath, processDate);
+
+		assertLogfile(logfile, "credit.txt");
+	}
+
 	private void assertLogfile(String logfile, String expectedFilename) {
 		assertThat(logfile, is(expectedFilename));
 		assertThat(MDC.get("inputFileName"), is(expectedFilename));
