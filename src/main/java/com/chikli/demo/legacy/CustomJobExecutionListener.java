@@ -26,9 +26,9 @@ public class CustomJobExecutionListener implements JobExecutionListener {
 		final JobParameters jobParameters = jobExecution.getJobParameters();
 		final String filePath = jobParameters.getString("input.file.path");
 
-		final String pPath = jobParameters.getString("processing.file.path");
-		final String procDate = jobParameters.getDate("process.date") != null ? DateTimeUtil.formatDateMdyNoSlashes(jobParameters.getDate("process.date")) : CustomJobExecutionListener.BLANK;
-		String logFileName = !StringUtils.isBlank(filePath) ? FileUtil.getFileNameFromPath(filePath) : jobExecution.getJobInstance().getJobName().concat(procDate);
+		final String processingFilePath = jobParameters.getString("processing.file.path");
+		final String processDate = jobParameters.getDate("process.date") != null ? DateTimeUtil.formatDateMdyNoSlashes(jobParameters.getDate("process.date")) : CustomJobExecutionListener.BLANK;
+		String logFileName = !StringUtils.isBlank(filePath) ? FileUtil.getFileNameFromPath(filePath) : jobExecution.getJobInstance().getJobName().concat(processDate);
 
 		if (jobExecution.getJobInstance().getJobName().equals("agencyDebtExtract")) {
 			final LocalDate processingExtractDate = DateTimeUtil.convertToLocalDate(jobParameters.getDate("processing.date"));
@@ -68,7 +68,7 @@ public class CustomJobExecutionListener implements JobExecutionListener {
 			return;
 		}
 
-		FileUtil.move(filePath, pPath);
+		FileUtil.move(filePath, processingFilePath);
 
 		final String icfp = jobParameters.getString("input.control.file.path");
 
