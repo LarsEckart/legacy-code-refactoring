@@ -7,11 +7,6 @@ import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * This resource facade supports out-bound file operations.
- * 
- * @author admin
- */
 public final class FileUtil {
 
 	private static final String CTXSPLIT = ".CTXSPLIT";
@@ -22,9 +17,6 @@ public final class FileUtil {
 
 	public static final String UNKNOWN = "UNKNOWN";
 
-	/**
-	 * Constructor
-	 */
 	private FileUtil() {
 	}
 
@@ -41,14 +33,7 @@ public final class FileUtil {
 		return name;
 	}
 
-	/**
-	 * gets the CTX main file name from split file name
-	 * 
-	 * @param name
-	 *            file name
-	 * @return file name
-	 */
-	public static String setupFile(String name) {
+	public static String retrieveCtxMainFileNameFromSplitFileName(String name) {
 		if (name == null) {
 			return null;
 		}
