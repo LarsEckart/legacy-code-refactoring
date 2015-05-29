@@ -39,42 +39,34 @@ public class CustomJobExecutionListener implements JobExecutionListener {
 	}
 
 	String setupLogfile(final JobExecution jobExecution, final JobParameters jobParameters, final String filePath, final String processDate) {
-		String logFileName = !StringUtils.isBlank(filePath) ? FileUtil.getFileNameFromPath(filePath) : jobExecution.getJobInstance().getJobName().concat(processDate);
+		String logFileName = generateLogfileName(jobExecution, jobParameters, filePath, processDate);
 
-		if (jobExecution.getJobInstance().getJobName().equals("agencyDebtExtract")) {
-			final LocalDate processingExtractDate = DateTimeUtil.convertToLocalDate(jobParameters.getDate("processing.date"));
-			logFileName = jobExecution.getJobInstance().getJobName() + jobParameters.getString("agencyId") + DateTimeUtil.formatDateYmdNoDashes(processingExtractDate);
-			LOG.info("Log file name :" + logFileName);
-		}
-
-		if (jobExecution.getJobInstance().getJobName().equals("postMatchExtract")) {
-			logFileName = jobParameters.getString("post.match.file.name");
-			LOG.info("Log file name :" + logFileName);
-		}
-
-		if (jobExecution.getJobInstance().getJobName().equals("tpkExtract")) {
-			logFileName = jobParameters.getString("tpk.offsets.extract.filename");
-			LOG.info("Log file name :" + logFileName);
-		}
-
-		if (jobExecution.getJobInstance().getJobName().equals("dnpExtract")) {
-			logFileName = jobParameters.getString("dnp.extract.filename");
-			LOG.info("Log file name :" + logFileName);
-		}
-
-		if (jobExecution.getJobInstance().getJobName().equals("paymentExtract")) {
-			logFileName = jobParameters.getString("payment.extract.filename");
-			LOG.info("Log file name :" + logFileName);
-		}
-
-		if (jobExecution.getJobInstance().getJobName().equals("creditElectExtract")) {
-			logFileName = jobParameters.getString("credit.elect.extract.filename");
-			LOG.info("Log file name :" + logFileName);
-		}
-
+		LOG.info("Log file name :" + logFileName);
 		MDC.remove("inputFileName");
 		MDC.put("inputFileName", logFileName);
+
 		return logFileName;
+	}
+
+	private String generateLogfileName(final JobExecution jobExecution, final JobParameters jobParameters, final String filePath, final String processDate) {
+		if (jobExecution.getJobInstance().getJobName().equals("agencyDebtExtract")) {
+			final LocalDate processingExtractDate = DateTimeUtil.convertToLocalDate(jobParameters.getDate("processing.date"));
+			return jobExecution.getJobInstance().getJobName() + jobParameters.getString("agencyId") + DateTimeUtil.formatDateYmdNoDashes(processingExtractDate);
+		} else if (jobExecution.getJobInstance().getJobName().equals("postMatchExtract")) {
+			return jobParameters.getString("post.match.file.name");
+		} else if (jobExecution.getJobInstance().getJobName().equals("tpkExtract")) {
+			return jobParameters.getString("tpk.offsets.extract.filename");
+		} else if (jobExecution.getJobInstance().getJobName().equals("dnpExtract")) {
+			return jobParameters.getString("dnp.extract.filename");
+		} else if (jobExecution.getJobInstance().getJobName().equals("paymentExtract")) {
+			return jobParameters.getString("payment.extract.filename");
+		} else if (jobExecution.getJobInstance().getJobName().equals("creditElectExtract")) {
+			return jobParameters.getString("credit.elect.extract.filename");
+		} else if (StringUtils.isBlank(filePath)) {
+			return jobExecution.getJobInstance().getJobName().concat(processDate);
+		} else {
+			return FileUtil.getFileNameFromPath(filePath);
+		}
 	}
 
 	private void moveFiles(final JobParameters jobParameters, final String filePath, final String processingFilePath, String logFileName) {
