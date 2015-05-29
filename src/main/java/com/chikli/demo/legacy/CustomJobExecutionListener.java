@@ -49,21 +49,23 @@ public class CustomJobExecutionListener implements JobExecutionListener {
 	}
 
 	private String generateLogfileName(final JobExecution jobExecution, final JobParameters jobParameters, final String filePath, final String processDate) {
-		if (jobExecution.getJobInstance().getJobName().equals("agencyDebtExtract")) {
+		String jobName = jobExecution.getJobInstance().getJobName();
+
+		if (jobName.equals("agencyDebtExtract")) {
 			final LocalDate processingExtractDate = DateTimeUtil.convertToLocalDate(jobParameters.getDate("processing.date"));
-			return jobExecution.getJobInstance().getJobName() + jobParameters.getString("agencyId") + DateTimeUtil.formatDateYmdNoDashes(processingExtractDate);
-		} else if (jobExecution.getJobInstance().getJobName().equals("postMatchExtract")) {
+			return jobName + jobParameters.getString("agencyId") + DateTimeUtil.formatDateYmdNoDashes(processingExtractDate);
+		} else if (jobName.equals("postMatchExtract")) {
 			return jobParameters.getString("post.match.file.name");
-		} else if (jobExecution.getJobInstance().getJobName().equals("tpkExtract")) {
+		} else if (jobName.equals("tpkExtract")) {
 			return jobParameters.getString("tpk.offsets.extract.filename");
-		} else if (jobExecution.getJobInstance().getJobName().equals("dnpExtract")) {
+		} else if (jobName.equals("dnpExtract")) {
 			return jobParameters.getString("dnp.extract.filename");
-		} else if (jobExecution.getJobInstance().getJobName().equals("paymentExtract")) {
+		} else if (jobName.equals("paymentExtract")) {
 			return jobParameters.getString("payment.extract.filename");
-		} else if (jobExecution.getJobInstance().getJobName().equals("creditElectExtract")) {
+		} else if (jobName.equals("creditElectExtract")) {
 			return jobParameters.getString("credit.elect.extract.filename");
 		} else if (StringUtils.isBlank(filePath)) {
-			return jobExecution.getJobInstance().getJobName().concat(processDate);
+			return jobName.concat(processDate);
 		} else {
 			return FileUtil.getFileNameFromPath(filePath);
 		}
